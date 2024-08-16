@@ -8,7 +8,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IPointService, PointService>();
+
+builder.Services.AddSingleton<IPointService>(sp => new PointService(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 

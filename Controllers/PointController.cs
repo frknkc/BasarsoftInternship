@@ -1,6 +1,5 @@
 ﻿using BasarsoftInternship.Entities;
 using BasarsoftInternship.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BasarsoftInternship.Models;
 
@@ -18,60 +17,98 @@ namespace BasarsoftInternship.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Point>> Get()
+        public ActionResult<Response<List<Point>>> Get()
         {
-            var points = _pointService.Get();
-            if(points.Count == 0)
+            try
             {
-                return NotFound(new Response<List<Point>>(404, "No points found"));
+                var points = _pointService.Get();
+                if (points.Count == 0)
+                {
+                    return NotFound(new Response<List<Point>>(404, "No points found"));
+                }
+                return Ok(new Response<List<Point>>(200, "Points retrieved successfully", points));
             }
-            return Ok(new Response<List<Point>>(200, "Points retrieved successfully", points));
+            catch (Exception ex)
+            {
+                // Veritabanı bağlantısı hatası durumunu ele alıyoruz
+                return StatusCode(500, new Response<List<Point>>(500, "An error occurred while retrieving points: " + ex.Message));
+            }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Point> Get(long id)
+        [HttpGet]
+        [Route("{id}")]
+        public ActionResult<Response<Point>> Get(long id)
         {
-            var point = _pointService.Get(id);
-            if (point == null)
+            try
             {
-                return NotFound(new Response<Point>(404, "Point not found"));
+                var point = _pointService.Get(id);
+                if (point == null)
+                {
+                    return NotFound(new Response<Point>(404, "Point not found"));
+                }
+                return Ok(new Response<Point>(200, "Point retrieved successfully", point));
             }
-            return Ok(new Response<Point>(200, "Point retrieved successfully", point));
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<Point>(500, "An error occurred while retrieving the point: " + ex.Message));
+            }
         }
 
         [HttpPost]
-        public ActionResult<Point> Add(Point point)
+        public ActionResult<Response<Point>> Add(Point point)
         {
-            var createdPoint = _pointService.Add(point);
-            return CreatedAtAction(nameof(Get), new { id = createdPoint.Id },
-                new Response<Point>(201, "Point created successfully", createdPoint));
+            try
+            {
+                var createdPoint = _pointService.Add(point);
+                return CreatedAtAction(nameof(Get), new { id = createdPoint.Id },
+                    new Response<Point>(201, "Point created successfully", createdPoint));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<Point>(500, "An error occurred while creating the point: " + ex.Message));
+            }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("{id}")]
         public ActionResult<Response<Point>> Update(long id, Point point)
         {
-            var existingPoint = _pointService.Get(id);
-            if (existingPoint == null)
+            try
             {
-                return NotFound(new Response<Point>(404, "Point not found"));
-            }
+                var existingPoint = _pointService.Get(id);
+                if (existingPoint == null)
+                {
+                    return NotFound(new Response<Point>(404, "Point not found"));
+                }
 
-            _pointService.Update(id, point);
-            return Ok(new Response<Point>(200, "Point updated successfully", existingPoint));
+                _pointService.Update(id, point);
+                return Ok(new Response<Point>(200, "Point updated successfully", point));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<Point>(500, "An error occurred while updating the point: " + ex.Message));
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("{id}")]
         public ActionResult<Response<Point>> Delete(long id)
         {
-            var existingPoint = _pointService.Get(id);
-            if (existingPoint == null)
+            try
             {
-                return NotFound(new Response<Point>(404, "Point not found"));
+                var existingPoint = _pointService.Get(id);
+                if (existingPoint == null)
+                {
+                    return NotFound(new Response<Point>(404, "Point not found"));
+                }
+
+                _pointService.Delete(id);
+                return Ok(new Response<Point>(200, "Point deleted successfully"));
             }
-
-            _pointService.Delete(id);
-            return Ok(new Response<Point>(200, "Point deleted successfully"));
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response<Point>(500, "An error occurred while deleting the point: " + ex.Message));
+            }
         }
-
     }
 }
