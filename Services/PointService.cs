@@ -1,137 +1,55 @@
 ﻿using BasarsoftInternship.Entities;
-using Npgsql;
+using BasarsoftInternship.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BasarsoftInternship.Services
 {
     public class PointService : IPointService
     {
-        private readonly string _connectionString;
+        private readonly AppDbContext _context;
 
-        public PointService(string connectionString)
+        public PointService(AppDbContext context)
         {
-            _connectionString = connectionString;
+            _context = context;
         }
 
         public List<Point> Get()
         {
-            var points = new List<Point>();
-
-            using (var connection = new NpgsqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT id, pointx, pointy, name FROM points";
-
-                using (var command = new NpgsqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            points.Add(new Point
-                            {
-                                Id = (int)reader.GetInt64(0),
-                                PointX = reader.GetDouble(1),
-                                PointY = reader.GetDouble(2),
-                                Name = reader.GetString(3)
-                            });
-                        }
-                    }
-                }
-            }
-
-            return points;
+            return _context.Points.ToList();
         }
 
         public Point Add(Point point)
         {
-            using (var connection = new NpgsqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                string query = "INSERT INTO points (pointx, pointy, name) VALUES (@pointx, @pointy, @name) RETURNING id";
-
-                using (var command = new NpgsqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@pointx", point.PointX);
-                    command.Parameters.AddWithValue("@pointy", point.PointY);
-                    command.Parameters.AddWithValue("@name", point.Name);
-
-                    point.Id = (int)command.ExecuteScalar();
-                }
-            }
-
+            _context.Points.Add(point);
+            _context.SaveChanges();
             return point;
         }
 
         public Point Get(long id)
         {
-            Point point = null;
-
-            using (var connection = new NpgsqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT id, pointx, pointy, name FROM points WHERE id = @id";
-
-                using (var command = new NpgsqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@id", id);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            point = new Point
-                            {
-                                Id = (int)reader.GetInt64(0),
-                                PointX = reader.GetDouble(1),
-                                PointY = reader.GetDouble(2),
-                                Name = reader.GetString(3)
-                            };
-                        }
-                    }
-                }
-            }
-
-            return point;
+            return _context.Points.Find(id);
         }
 
         public Point Update(long id, Point point)
         {
-            using (var connection = new NpgsqlConnection(_connectionString))
+            var existingPoint = _context.Points.Find(id);
+            if (existingPoint != null)
             {
-                connection.Open();
-
-                string query = "UPDATE points SET pointx = @pointx, pointy = @pointy, name = @name WHERE id = @id";
-
-                using (var command = new NpgsqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@pointx", point.PointX);
-                    command.Parameters.AddWithValue("@pointy", point.PointY);
-                    command.Parameters.AddWithValue("@name", point.Name);
-                    command.Parameters.AddWithValue("@id", id);
-
-                    command.ExecuteNonQuery();
-                }
+                existingPoint.PointX = point.PointX;
+                existingPoint.PointY = point.PointY;
+                existingPoint.Name = point.Name;
+                _context.SaveChanges();
             }
-
-            return point;
+            return existingPoint;
         }
 
         public void Delete(long id)
         {
-            using (var connection = new NpgsqlConnection(_connectionString))
+            var point = _context.Points.Find(id);
+            if (point != null)
             {
-                connection.Open();
-
-                string query = "DELETE FROM points WHERE id = @id";
-
-                using (var command = new NpgsqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@id", id);
-                    command.ExecuteNonQuery();
-                }
+                _context.Points.Remove(point);
+                _context.SaveChanges();
             }
         }
     }
