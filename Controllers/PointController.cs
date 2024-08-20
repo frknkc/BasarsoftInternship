@@ -2,6 +2,9 @@
 using BasarsoftInternship.Services;
 using Microsoft.AspNetCore.Mvc;
 using BasarsoftInternship.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace BasarsoftInternship.Controllers
 {
@@ -17,11 +20,11 @@ namespace BasarsoftInternship.Controllers
         }
 
         [HttpGet]
-        public ActionResult<Response<List<Point>>> Get()
+        public async Task<ActionResult<Response<List<Point>>>> GetAsync()
         {
             try
             {
-                var points = _pointService.Get();
+                var points = await _pointService.GetAsync();
                 if (points.Count == 0)
                 {
                     return NotFound(new Response<List<Point>>(404, "No points found"));
@@ -30,18 +33,17 @@ namespace BasarsoftInternship.Controllers
             }
             catch (Exception ex)
             {
-                // Veritabanı bağlantısı hatası durumunu ele alıyoruz
                 return StatusCode(500, new Response<List<Point>>(500, "An error occurred while retrieving points: " + ex.Message));
             }
         }
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Response<Point>> Get(long id)
+        public async Task<ActionResult<Response<Point>>> GetAsync(long id)
         {
             try
             {
-                var point = _pointService.Get(id);
+                var point = await _pointService.GetAsync(id);
                 if (point == null)
                 {
                     return NotFound(new Response<Point>(404, "Point not found"));
@@ -53,14 +55,13 @@ namespace BasarsoftInternship.Controllers
                 return StatusCode(500, new Response<Point>(500, "An error occurred while retrieving the point: " + ex.Message));
             }
         }
-
         [HttpPost]
         public ActionResult<Response<Point>> Add(Point point)
         {
             try
             {
                 var createdPoint = _pointService.Add(point);
-                return CreatedAtAction(nameof(Get), new { id = createdPoint.Id },
+                return CreatedAtAction(nameof(GetAsync), new { id = createdPoint.Id },
                     new Response<Point>(201, "Point created successfully", createdPoint));
             }
             catch (Exception ex)
@@ -71,18 +72,18 @@ namespace BasarsoftInternship.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public ActionResult<Response<Point>> Update(long id, Point point)
+        public async Task<ActionResult<Response<Point>>> UpdateAsync(long id, Point point)
         {
             try
             {
-                var existingPoint = _pointService.Get(id);
+                var existingPoint = await _pointService.GetAsync(id);
                 if (existingPoint == null)
                 {
                     return NotFound(new Response<Point>(404, "Point not found"));
                 }
 
-                _pointService.Update(id, point);
-                return Ok(new Response<Point>(200, "Point updated successfully", point));
+                var updatedPoint = await _pointService.UpdateAsync(id, point);
+                return Ok(new Response<Point>(200, "Point updated successfully", updatedPoint));
             }
             catch (Exception ex)
             {
@@ -92,17 +93,17 @@ namespace BasarsoftInternship.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public ActionResult<Response<Point>> Delete(long id)
+        public async Task<ActionResult<Response<Point>>> DeleteAsync(long id)
         {
             try
             {
-                var existingPoint = _pointService.Get(id);
+                var existingPoint = await _pointService.GetAsync(id);
                 if (existingPoint == null)
                 {
                     return NotFound(new Response<Point>(404, "Point not found"));
                 }
 
-                _pointService.Delete(id);
+                await _pointService.DeleteAsync(id);
                 return Ok(new Response<Point>(200, "Point deleted successfully"));
             }
             catch (Exception ex)

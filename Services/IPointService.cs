@@ -1,13 +1,15 @@
 ﻿using BasarsoftInternship.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BasarsoftInternship.Services
 {
     public interface IPointService
     {
-        List<Point> Get();
+        Task<List<Point>> GetAsync();
         Point Add(Point point);
-        Point Get(long id);
-        Point Update(long id, Point point);
-        void Delete(long id);
+        Task<Point> GetAsync(long id);
+        Task<Point> UpdateAsync(long id, Point point);
+        Task DeleteAsync(long id);
     }
 }
