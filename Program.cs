@@ -1,4 +1,5 @@
 using BasarsoftInternship.Data;
+using BasarsoftInternship.Entities;
 using BasarsoftInternship.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>();
-builder.Services.AddScoped<IPointService, PointService>();
+builder.Services.AddDbContext<DbContext, AppDbContext>();
 
+builder.Services.AddScoped(typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 
 var app = builder.Build();
 

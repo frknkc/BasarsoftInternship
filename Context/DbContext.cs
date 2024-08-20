@@ -19,6 +19,8 @@ namespace BasarsoftInternship.Data
 
         public DbSet<Point> Points { get; set; }
 
+        public DbSet<Try> Tries { get; set; }
+
       
     }
 }
