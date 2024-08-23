@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BasarsoftInternship.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240820123012_init_2")]
-    partial class init_2
+    [Migration("20240823060023_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,27 +45,6 @@ namespace BasarsoftInternship.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Points");
-                });
-
-            modelBuilder.Entity("BasarsoftInternship.Entities.Try", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Tries");
                 });
 #pragma warning restore 612, 618
         }

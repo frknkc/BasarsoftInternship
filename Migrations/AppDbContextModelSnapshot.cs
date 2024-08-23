@@ -43,27 +43,6 @@ namespace BasarsoftInternship.Migrations
 
                     b.ToTable("Points");
                 });
-
-            modelBuilder.Entity("BasarsoftInternship.Entities.Try", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Tries");
-                });
 #pragma warning restore 612, 618
         }
     }

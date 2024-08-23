@@ -14,10 +14,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DbContext, AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped(typeof(GenericRepository<>));
+// Register the UnitOfWork
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Register the GenericService with specific entity type
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+
+//builder.Services.AddDbContext<DbContext, AppDbContext>();
+//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+//builder.Services.AddScoped(typeof(IGenericService<Point>), typeof(GenericService<>));
 
 var app = builder.Build();
 
