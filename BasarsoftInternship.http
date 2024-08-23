@@ -4,3 +4,6 @@ GET {{BasarsoftInternship_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{BasarsoftInternship_HostAddress}}/Point/
+Accept: application/json

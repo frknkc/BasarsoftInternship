@@ -7,6 +7,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://127.0.0.1:5500")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -28,6 +39,7 @@ builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 //builder.Services.AddScoped(typeof(IGenericService<Point>), typeof(GenericService<>));
 
 var app = builder.Build();
+app.UseCors("AllowLocalhost");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
