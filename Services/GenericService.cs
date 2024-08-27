@@ -33,9 +33,15 @@ namespace BasarsoftInternship.Services
             return entity;
         }
 
-        public async Task<TEntity> UpdateAsync(object id, TEntity entity)
+        public async Task<TEntity> UpdateAsync(object id, TEntity updatedEntity)
         {
-            _dbSet.Update(entity);
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"Entity with id {id} not found.");
+            }
+            _dbSet.Update(entity);  
+            _context.Entry(entity).CurrentValues.SetValues(updatedEntity);
             await _context.SaveChangesAsync();
             return entity;
         }
