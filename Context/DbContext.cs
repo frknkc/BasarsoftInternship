@@ -19,5 +19,7 @@ namespace BasarsoftInternship.Data
         }
 
         public DbSet<Point> Points { get; set; }
+
+        public DbSet<Wkt> Wkts { get; set; }
     }
 }
