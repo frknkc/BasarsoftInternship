@@ -40,7 +40,7 @@ Aşağıda da kullanıma hazır API Reference'larını detaylı bir şekilde gö
 
 #### Get all items
 
-```http
+```
   GET /api/Wkt
 ```
 
@@ -51,7 +51,7 @@ Aşağıda da kullanıma hazır API Reference'larını detaylı bir şekilde gö
 | `name`    | `string` | **nullable**. For each feature names |
 #### Get item
 
-```http
+```
   GET /api/Wkt/${id}
 ```
 | Parameter | Type     | Description                          |
@@ -60,7 +60,7 @@ Aşağıda da kullanıma hazır API Reference'larını detaylı bir şekilde gö
 |`wktString`| `string` | **nullable**. For WKT format         |
 | `name`    | `string` | **nullable**. For each feature names |
 
-```http
+```
   PUT /api/Wkt/${id}
 ```
 | Parameter | Type     | Description                          |
@@ -69,7 +69,7 @@ Aşağıda da kullanıma hazır API Reference'larını detaylı bir şekilde gö
 |`wktString`| `string` | **nullable**. For WKT format         |
 | `name`    | `string` | **nullable**. For each feature names |
 
-```http
+```
   DELETE /api/Wkt/${id}
 ```
 | Parameter | Type     | Description                          |
